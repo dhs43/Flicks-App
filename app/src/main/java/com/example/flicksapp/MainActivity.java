@@ -22,6 +22,13 @@ public class MainActivity extends AppCompatActivity {
 
     List<Movie> movies;
 
+    //Add RecyclerView support library to the gradle build file - DONE
+    //Define a model class to use as the data source - DONE
+    //Add a RecyclerView to your activity to display the items - DONE
+    //Create a custom row layout XML file to visualize the item
+    //Create a RecyclerView.Adapter and ViewHolder to render the item
+    //Bind the adapter to the data source to populate the RecyclerView
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
