@@ -1,15 +1,17 @@
 package com.example.flicksapp.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.example.flicksapp.GlideApp;
 import com.example.flicksapp.R;
 import com.example.flicksapp.models.Movie;
 
@@ -28,12 +30,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d("smile", "onCreateViewHolder");
         View view = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.d("smile", "onBindViewHolder");
         Movie movie = movies.get(position);
         //bind the movie data into the view holder
         holder.bind(movie);
@@ -60,7 +64,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         public void bind(Movie movie) {
             tvTitle.setText(movie.getTitle());
             tvOverview.setText(movie.getOverview());
-            Glide.with(context).load(movie.getPosterPath()).into(ivPoster);
+            //default imageUrl is for portrait mode
+            String imageUrl = movie.getPosterPath();
+            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                imageUrl = movie.getBackdropPath();
+            }
+            GlideApp.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .into(ivPoster);
         }
     }
 }
