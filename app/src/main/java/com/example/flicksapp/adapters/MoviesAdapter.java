@@ -73,6 +73,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     .load(imageUrl)
                     .placeholder(R.drawable.placeholder)
                     .into(ivPoster);
+            tvTitle.setOnClickListener();
         }
     }
 }
