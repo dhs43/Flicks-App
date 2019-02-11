@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.flicksapp.DetailActivity;
 import com.example.flicksapp.GlideApp;
 import com.example.flicksapp.R;
@@ -78,6 +79,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             }
             GlideApp.with(context)
                     .load(imageUrl)
+                    .fitCenter()
+                    .transform(new RoundedCorners(10))
                     .placeholder(R.drawable.placeholder)
                     .into(ivPoster);
             container.setOnClickListener(new View.OnClickListener() {
