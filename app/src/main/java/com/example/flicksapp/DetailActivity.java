@@ -26,12 +26,12 @@ public class DetailActivity extends YouTubeBaseActivity {
     public static final String YOUTUBE_API_KEY = "AIzaSyBLtptPoS0YMJZle8UkkRIjO3xG-ncf_Vk";
     private static final String TRAILERS_URL = "https://api.themoviedb.org/3/movie/%d/videos?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&language=en-US";
 
-
     TextView tvTitle;
     TextView tvOverview;
     RatingBar ratingBar;
     TextView tvRatingNum;
     YouTubePlayerView youTubePlayerView;
+    TextView tvReleaseDate;
 
     Movie movie;
 
@@ -46,6 +46,7 @@ public class DetailActivity extends YouTubeBaseActivity {
         tvOverview.setMovementMethod(new ScrollingMovementMethod());
         ratingBar = findViewById(R.id.ratingBar);
         tvRatingNum = findViewById(R.id.tvRatingNum);
+        tvReleaseDate = findViewById(R.id.tvReleaseDate);
         youTubePlayerView = findViewById(R.id.player);
 
         movie = Parcels.unwrap(getIntent().getParcelableExtra("movie"));
@@ -53,6 +54,8 @@ public class DetailActivity extends YouTubeBaseActivity {
         tvOverview.setText(movie.getOverview());
         ratingBar.setRating((float) movie.getRating());
         tvRatingNum.setText(Float.toString((float) movie.getRating()));
+        tvReleaseDate.setText("Released: " + movie.getReleaseDate());
+
 
 
         AsyncHttpClient client = new AsyncHttpClient();

@@ -17,6 +17,7 @@ public class Movie {
     String backdropPath;
     double rating;
     int id;
+    String releaseDate;
 
     //empty constructor needed by the Parceler library
     public Movie() {
@@ -29,6 +30,7 @@ public class Movie {
         backdropPath = jsonObject.getString("backdrop_path");
         rating = jsonObject.getDouble("vote_average");
         id = jsonObject.getInt("id");
+        releaseDate = jsonObject.getString("release_date");
     }
 
     //takes a JSON array and loops through each item, instantiating
@@ -63,5 +65,9 @@ public class Movie {
 
     public int getId() {
         return id;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
     }
 }

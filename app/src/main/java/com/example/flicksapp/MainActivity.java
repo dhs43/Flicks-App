@@ -74,11 +74,17 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         try {
                             JSONArray movieJsonArray = response.getJSONArray("results");
-                            movies.clear();
-                            movies.addAll(Movie.fromJsonArray(movieJsonArray));
-                            moviesAdapter.notifyDataSetChanged();
-                            rvMovies.scrollToPosition(0);
-                            Log.d("queriedMovies", movies.get(0).getTitle());
+                            //check if query returns any results
+                            if (movieJsonArray.length() > 0) {
+                                movies.clear();
+                                movies.addAll(Movie.fromJsonArray(movieJsonArray));
+                                moviesAdapter.notifyDataSetChanged();
+                                rvMovies.scrollToPosition(0);
+                                Log.d("queriedMovies", movies.get(0).getTitle());
+                            }else{
+                                movies.clear();
+                                moviesAdapter.notifyDataSetChanged();
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
