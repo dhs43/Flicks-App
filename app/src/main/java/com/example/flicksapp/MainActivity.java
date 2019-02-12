@@ -29,49 +29,32 @@ import cz.msebera.android.httpclient.Header;
 public class MainActivity extends AppCompatActivity {
 
     private static final String MOVIE_URL = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
-    private static final String QUERY_URL = "https://api.themoviedb.org/3/search/movie?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&language=en-US&query=%d&page=1&include_adult=false";
+    private static final String QUERY_URL = "https://api.themoviedb.org/3/search/movie?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&language=en-US&query=%s&page=1&include_adult=false";
 
     List<Movie> movies;
     private Toolbar searchBar;
+    private RecyclerView rvMovies;
 
+    private MoviesAdapter moviesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        RecyclerView rvMovies = findViewById(R.id.rvMovies);
+        rvMovies = findViewById(R.id.rvMovies);
         movies = new ArrayList<>();
-        final MoviesAdapter adapter = new MoviesAdapter(this, movies);
+        moviesAdapter = new MoviesAdapter(this, movies);
         rvMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        rvMovies.setAdapter(adapter);
+        rvMovies.setAdapter(moviesAdapter);
 
         Toolbar toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get(MOVIE_URL, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    JSONArray movieJsonArray = response.getJSONArray("results");
-                    movies.addAll(Movie.fromJsonArray(movieJsonArray));
-                    adapter.notifyDataSetChanged();
-                    Log.d("smile", movies.toString());
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-            }
-        });
+        getPopularMovies();
     }
 
 
-    //Loading menu
+    //Loading menu with search bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
@@ -80,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-        final MoviesAdapter adapter = new MoviesAdapter(this, movies);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -93,10 +74,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         try {
                             JSONArray movieJsonArray = response.getJSONArray("results");
+                            movies.clear();
                             movies.addAll(Movie.fromJsonArray(movieJsonArray));
-                            adapter.notifyDataSetChanged();
-                            Log.d("smile", movies.toString());
-
+                            moviesAdapter.notifyDataSetChanged();
+                            rvMovies.scrollToPosition(0);
+                            Log.d("queriedMovies", movies.get(0).getTitle());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -121,7 +103,49 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Do whatever you need
+                return true; // KEEP IT TO TRUE OR IT DOESN'T OPEN !!
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                movies.clear();
+                getPopularMovies();
+                rvMovies.scrollToPosition(0);
+                return true; // OR FALSE IF YOU DIDN'T WANT IT TO CLOSE!
+            }
+        });
+
+
         return true;
     }
 
+
+    public void getPopularMovies() {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(MOVIE_URL, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    JSONArray movieJsonArray = response.getJSONArray("results");
+                    movies.addAll(Movie.fromJsonArray(movieJsonArray));
+                    moviesAdapter.notifyDataSetChanged();
+                    Log.d("gotPopularMovies", movies.toString());
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+    }
 }
